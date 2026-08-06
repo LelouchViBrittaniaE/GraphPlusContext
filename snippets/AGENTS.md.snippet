@@ -1,0 +1,20 @@
+# GraphPlusContext — standing laws (append to ~/.codex/AGENTS.md, or any agent tool's global instruction file)
+
+## Graph method — fan out, never serialize
+The work is a graph, not a chain. Before doing two or more pieces of work, or writing any plan
+containing "and then": draw the dependency graph, cut the fake edges, and run every independent
+node in parallel. Serial chains with no real dependency are a defect class. Full executable
+method: `~/.codex/skills/graph-method/SKILL.md`.
+
+## Context vault — the durable layer
+The context system of record is `__VAULT_PATH__`. `boot.md` is the cursor; conventions in
+`README.md`; operating templates in `procedures.md`. Rules that bind every session:
+- **State your project before working.** If the task names no project, read `boot.md` and confirm
+  which project you are on before writing anything.
+- **One writer per surface.** Your only vault write surfaces are the index of a project you
+  actually changed (`projects/<name>/index.md`) and your own `seats/YYYY-MM-DD-<seat-name>.md`
+  log. Pointers and command-derived status lines only — never content.
+- **Bank before dying.** If the session is ending or context is degrading, reconcile your
+  project's index from ground truth (git log, gates — never memory) and append your seat log,
+  without being asked. Templates: `procedures.md`.
+- A stale index line is an audit prompt, not a fact — re-verify before relying on it.

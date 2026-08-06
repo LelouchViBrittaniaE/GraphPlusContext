@@ -1,0 +1,17 @@
+{
+  "_comment": "GraphPlusContext — inject the live vault cursor into every Claude Code session at startup. Merge the 'hooks' key into ~/.claude/settings.json (do not replace the whole file). Replace __VAULT_PATH__ with your vault's absolute path; install.sh does this for you.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -n --rawfile boot \"__VAULT_PATH__/boot.md\" '{hookSpecificOutput:{hookEventName:\"SessionStart\",additionalContext:(\"=== VAULT BOOT CURSOR (auto-injected at session start) ===\\n\" + $boot)}}' 2>/dev/null || true",
+            "timeout": 10,
+            "statusMessage": "Loading vault boot cursor"
+          }
+        ]
+      }
+    ]
+  }
+}

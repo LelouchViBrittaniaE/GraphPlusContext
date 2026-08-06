@@ -1,0 +1,25 @@
+# GraphPlusContext — standing laws (append to ~/.claude/CLAUDE.md)
+
+## Graph method — fan out, never serialize
+The work is a graph, not a chain. Before dispatching two or more pieces of work, or writing any
+plan containing "and then": draw the dependency graph, cut the fake edges, and run every
+independent node in parallel. Serial chains with no real dependency are a defect class, not a
+style choice. Full method: the `graph-method` skill.
+
+## Context vault — the durable layer
+The context system of record is `__VAULT_PATH__`. `boot.md` is the cursor; conventions in
+`README.md`; operating templates in `procedures.md`. Rules that bind every session, routed or
+not:
+- **State your project before working.** If the request names no project or index, read
+  `boot.md`, say which project you believe you are on, and confirm before writing anything.
+- **One writer per surface.** Your only vault write surfaces are the index of a project you
+  actually changed and your own `seats/YYYY-MM-DD-<seat-name>.md` log. `boot.md` and other
+  projects' indexes belong to the orchestrator. Pointers and command-derived status lines only —
+  never content.
+- **Never work a project another live session owns.** If unsure whether another session is
+  active on the same repo, ask before writing.
+- **Bank before dying.** If your context is degrading or the session is ending, reconcile your
+  project's index from ground truth (git log, gates — never memory) and append your seat log,
+  without being asked. Full wind-down templates live in `procedures.md`.
+- A stale index line is an audit prompt, not a fact: re-verify against ground truth before
+  relying on it.
