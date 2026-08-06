@@ -50,7 +50,7 @@ wake, and project dispatch. You do not have to remember to invoke either one.
 ## Install
 
 ```bash
-git clone https://github.com/<you>/GraphPlusContext.git
+git clone https://github.com/LelouchViBrittaniaE/GraphPlusContext.git
 cd GraphPlusContext
 ./install.sh ~/context-vault
 ```
