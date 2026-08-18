@@ -29,7 +29,9 @@ GraphPlusContext addresses both as machinery rather than as good intentions.
 
 ```
 skills/graph-method/SKILL.md      the executable parallelism discipline — draw, fan out,
-                                  verify on fresh context, isolate the writers, anchor the truth
+                                  verify on fresh context, isolate the writers, anchor the truth,
+                                  and engineer recurring loops with state hubs, work ledgers,
+                                  scored ratchets, bounds, escalation, and conditional triggers
 skills/context-vault/SKILL.md     the durable-context discipline — dispatch, wind-down, wake,
                                   outside-in verification, continuity across tools and accounts
 vault-template/                   the vault itself: boot.md cursor, per-project indexes,
@@ -118,7 +120,10 @@ collapses into something wide. The skill goes on to cover the failures that show
 run wide: agents that agree with themselves (fresh-context verifiers, never the author), agents
 that overwrite each other (a worktree per writing node), cycles that never converge (dedupe
 against everything seen, not just against confirmed results), and graphs where nothing touches
-reality (anchors — tests that actually ran).
+reality (anchors — tests that actually ran). The loop-engineering enhancement adds the missing
+discipline for recurring work: a durable state hub, atomic work ledger, per-criterion scored
+ratchet, event-counted bounds, risk-based escalation, a conditional trigger rule, and
+receipts-or-RED anchors with a seven-question self-check.
 
 It also tells you **when not to graph**, which matters more than it sounds. Most tasks are not
 graphs, and forcing one on a genuinely sequential task buys coordination cost for zero speedup.

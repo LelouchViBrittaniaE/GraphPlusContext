@@ -1,336 +1,256 @@
 ---
 name: graph-method
-description: "The work is a graph, not a chain — serial agent chains are a defect class, not a style choice. Draw the nodes, cut the fake edges, fan out, verify on fresh context, isolate the writers, anchor the truth. Trigger: the user says 'graph this', 'draw the graph', '/graph-method', 'why is this serial', 'parallelize this'; ALSO trigger unprompted before dispatching two or more pieces of work, before writing any plan containing an 'and then', and before handing a mandate to a delegated agent."
+description: "The work is a graph, not a chain — serial agent chains are a defect class, not a style choice. Draw the nodes, cut the fake edges, fan out, verify on fresh context, isolate the writers, anchor the truth, and discipline every recurring loop with a state hub, work ledger, scored ratchet, bounds, and escalation. Trigger: the user says 'graph this', 'draw the graph', '/graph-method', 'why is this serial', 'parallelize this'; ALSO trigger unprompted before dispatching two or more pieces of work, before writing any plan containing an 'and then', before handing a mandate to a delegated agent, and before wiring any recurring or event-driven trigger."
 ---
 
 # Graph Method — parallel agent work, made executable
 
-**The law:** the work is a graph. Independent work dispatches together. A serial chain of agent
-calls is the defect class, not a style preference.
+**The law:** the work is a graph. Independent work dispatches together. A serial chain of
+agent calls is the defect class, not a style preference. A recurring loop is a graph node with
+its own discipline: state, claims, measurement, limits, and escalation.
 
-**Why this exists as a skill and not a paragraph in a README:** a prose law is an unenforced
-law. This file is the procedure you run under pressure, at the exact moment when the fast thing
-to do is type one more "and then".
+This skill is distilled from public graph-engineering writing and public loop-engineering
+practice. The primary public references are [Karpathy's autoresearch repository](https://github.com/karpathy/autoresearch), [0xCodila's loop-engineering discourse](https://x.com/0xCodila/status/2079597821511020996), and [0xCodez's graph-engineering roadmap](https://x.com/0xCodez/status/2079165300625330317). Adapt the machinery to the project; keep the falsifiers.
 
-*Distilled from public writing on graph-engineering agent loops (0xCodila's five-step loop,
-0xCodez's fourteen-step roadmap) and from production experience running large multi-agent
-sprints. Adapt freely.*
+## STEP 0 — THE PERMISSION TABLE
 
----
+Before anything dispatches, declare every artifact the work touches and assign each exactly one
+permission:
 
-## STEP 1 — THE DRAW (never skip; it takes 30 seconds)
+| Permission | What lives there | Who writes it |
+|---|---|---|
+| **IMMUTABLE** | Acceptance criteria, falsifiers, reference specs, and definition of done | Nobody in the loop; changing one is an explicit maintainer decision |
+| **READ** | Mandates, goals, and instructions the work runs under | The loop reads them; it does not author them |
+| **WRITE** | The implementation, reports, and other work product | Exactly one region, owned by exactly one writing node |
 
-Before acting, before dispatching, before writing the plan: **list the work as nodes.**
+This is an artifact write-ACL, not a capability restriction. Workers retain their tools; the
+truth-bearing artifacts remain protected. An optimizer that can edit its own grader can make the
+test easier. The acceptance bar resolves to a pinned reference, never to the previous
+iteration's output.
 
-- A **node** is one unit of work: one agent, one bounded job, one input in, one output out.
+The useful model from `autoresearch` is a three-file split: instructions, work, and grader. The
+general rule is stronger than a prose reminder: the grader, tests, and acceptance criteria are
+immutable to the worker. A sentence saying “do not change this” is not enforcement by itself.
+
+## STEP 1 — THE DRAW
+
+Before acting, dispatching, or writing a plan, list the work as nodes.
+
+- A **node** is one bounded unit of work: one agent, job, or input-to-output operation.
 - An **edge** is a dependency: this node's output feeds that node's input. Nothing more.
 
-Then walk every `and then` in your own plan and ask the one question:
+Walk every `and then` in the plan and ask:
 
-> **Does the next step actually read the previous step's output?**
->
-> - **Yes** → real edge. Keep the order. Name the edge by the DATA that crosses it, not by
->   the order you typed it.
-> - **No** → **no edge. The wait is wasted. They dispatch together.**
+> Does the next step actually read the previous step's output?
 
-*"Summarize this file and then tell me the weather" — the weather doesn't read the summary.*
-Two independent nodes that a linear habit chained for no reason.
+If yes, keep the edge and name the data crossing it. If no, cut the edge and dispatch both
+together. Write the draw down. If there are no two independent boxes, this is a sequential task
+or a loop; follow the relevant loop discipline below instead of pretending it is a graph.
 
-**The finding you should expect:** most chains have two or three arrows that carry no data —
-they are just the order you happened to type things in. Cut those arrows and the chain
-collapses into something wider.
+## STEP 2 — FAN OUT, PIPELINE, AND BARRIERS
 
-**Write the draw down** in the reply or the plan doc: one line per node, plus the edges you kept
-and why each kept edge is real. A kept edge with no named data crossing it is a fake edge you
-have not cut yet.
+Fan out every node with no inbound edge from unfinished work in one batch. A failed node must
+resolve to a recorded failure, not silently sink the batch; fan-ins tolerate missing results.
 
-**The tell:** if you cannot find two boxes with no arrow between them, there is no graph here.
-Go to §6 (WHEN NOT TO GRAPH). That is a legitimate answer — but it must be the CONCLUSION of a
-draw, never a substitute for doing one.
+Prefer a pipeline when each item can move through stages independently. A barrier is justified
+only by:
 
----
+1. cross-item deduplication;
+2. an early exit based on the total result; or
+3. cross-comparison, ranking, or adjudication between results.
 
-## STEP 2 — THE FAN-OUT RULE
-
-**Fan out where the work is independent.** N independent nodes → one batch, spawned at once,
-results collected as an array. This is the move that pays for everything else.
-
-**What dispatches in one batch:**
-- Every node with no inbound edge from an unfinished node. All of them. Same batch.
-- Every independent tool call in ONE assistant turn — never N sequential rounds.
-- Multi-step artifact work (write + publish + verify + commit) is **one brief to one agent**,
-  not N orchestrator rounds.
-
-**Make "wide" mean something:**
-- Concurrency is typically capped near core count locally; excess **queues**, it does not fail.
-  Passing a hundred jobs is legal — they all finish, a handful at a time.
-- A job that throws should **resolve to null** rather than sink the batch. Always filter the
-  results, and design every fan-in to tolerate missing inputs rather than assume a full set.
-- **Start scoped: cap the first run at ~20 items**, watch behaviour and cost, then open it up.
-  The saving from orchestration is in COORDINATION — the script's variables hold intermediate
-  results instead of your context — not in the work itself, which still costs what it costs.
-- The publicly reported ceiling, with its price attached: Bun's Zig→Rust port ran dozens of
-  agent workflows at a peak of ~64 agents in parallel, converting a very large codebase in
-  days — at a six-figure usage bill, with a human designing and monitoring throughout. The
-  scale is real. So is the price and the supervision.
-
-**What a barrier costs:** a barrier makes **everything wait for the slowest node** before the
-next stage starts. That latency is real, measurable, wasted time.
-
-**Default to a pipeline** — each item streams through all stages independently, item A in stage
-3 while item B is still in stage 1, fast items finishing early instead of idling behind slow
-ones.
-
-**A barrier is genuinely required for exactly three things:**
-1. **Cross-item dedupe** — the stage must see every result to know what is a duplicate.
-2. **Early-exit on the total** — the decision is about the whole set (nothing came back; the
-   total crossed a threshold; the sweep is empty, so stop).
-3. **Cross-comparison** — the prompt compares each item against *the other findings* (ranking
-   by impact, picking a winner, adjudicating between them).
-
-**A barrier is laziness when** the reason is "it's cleaner code", "the stages feel separate", or
-"I want to read them all before continuing". *Separate is not the same as synchronized.*
-
-**The smell test:** if you wrote `parallel → transform → parallel` and that middle transform has
-no cross-item dependency, you should have used a pipeline and skipped the barrier. Flattening a
-list is an **edge**, not a node — do it inline, in code. A great deal of what people burn model
-tokens on is really an edge, and **edges are free**.
-
----
+“Cleaner code,” “the stages feel separate,” and “I want to read them all first” are not
+dependencies. Flattening a list is an edge, not a node.
 
 ## STEP 3 — THE VERIFIER RULE
 
-**The first failure mode of every graph: the graph agrees with itself.** When an agent checks
-its own work it goes easy on itself — models prefer their own outputs.
+The graph must not agree with itself. Put a verifier on the edge before a result can travel
+downstream. Its job is to try to kill the finding.
 
-So a verifier node sits **on the edge**, before a result is allowed downstream, and its only job
-is **to try to kill the finding**. If it survives, it passes. If not, it never reaches the
-answer.
+Three conditions are mandatory:
 
-**Three non-negotiables. All three, or it is not a verifier:**
-1. **Fresh context.** Its own window. Hand a verifier the same conversation the executor had and
-   it is not verifying — *it is agreeing with itself in a different font.* A graph of agents
-   sharing one context is a single loop in a costume: it fails the same way, later, more
-   expensively, with more green lights on the way down.
-2. **A real signal.** Not *"did the agent say it's done"* — **"does the test actually pass"**.
-   Evidence, not self-report.
-3. **Never the author.** The seat that produced the thing may not be the seat that confirms it.
-   Self-confirmation is the same claim made twice, not a check.
+1. **Fresh context.** The verifier has its own context and does not inherit the executor's
+   transcript.
+2. **A real signal.** It runs a test, checks evidence, or reproduces the behavior; it does not
+   ask whether the author says it is done.
+3. **Never the author.** The node that produced the work cannot be the node that confirms it.
 
-**The three verifier shapes, and when each fits:**
+**Default verdict: REJECT.** The burden of proof is on the work. A timeout, missing verdict,
+unreadable receipt, or check the verifier cannot run resolves to `REJECT` or
+`ESCALATE_HUMAN`, never to pass. Do not trust an implementer's report that tests passed; run
+them independently.
 
-| Shape | What it does | Reach for it when |
-|---|---|---|
-| **Adversarial refute** | For each finding, spawn N independent skeptics prompted to REFUTE it; keep it only if a majority survive. | The output is a **claim that could be wrong** — a finding, a fact, a "this is fixed". The default shape for anything factual. |
-| **Perspective-diverse** | Give each verifier a distinct lens — correctness, security, does-it-reproduce, design-fit — because diversity catches failure modes N identical checks never will. | The output is an **artifact with several ways to be wrong** — a diff, a screen, a migration, a document. |
-| **Judge panel** | Generate N attempts from different angles, score them with parallel judges, synthesize from the winner while grafting the best of the runners-up. | The output is a **choice among candidates** — which draft, which architecture, which of three plans. |
+The verifier also checks scope and intent, and looks for manufactured greens: disabled tests,
+weakened assertions, commented-out checks, argument-position mistakes, routes around the gate,
+and receipts that merely repeat the test input.
 
-**Route the verifier by size.** A small change gets one quick pass; a large one triggers the
-full parallel audit. Make the router code, not vibes — so skipping it would have to be written
-into the graph.
+Choose the shape by the output:
 
----
+| Shape | Use it for |
+|---|---|
+| **Adversarial refute** | Claims or findings that could be false; independent skeptics try to refute them |
+| **Perspective-diverse** | Artifacts with multiple failure modes; use distinct correctness, security, reproduction, and fit lenses |
+| **Judge panel** | A choice among candidates; independent judges score candidates before synthesis |
 
-## STEP 4 — ISOLATION (before the fan-out, not after the collision)
+Scale verifier depth with change size, never verifier existence. In a loop, verification fires
+on every iteration.
 
-**The second failure mode: agents stepping on each other.** This is not hypothetical. When
-Bun's team first fanned a large port across many agents, the run failed operationally — agents
-ran shared git commands in one workspace and **overwrote each other**. The fix was
-**structural, not clever prompting**: forbid the unsafe commands, give each group its own
-isolated worktree.
+## STEP 4 — ISOLATION
 
-**Rule: workers that WRITE must not share a workspace.** Each writing node gets its own git
-worktree, does its work in a sandbox, and merges cleanly.
+Workers that write in parallel must not share a checkout. Give each writing node its own
+worktree or sandbox, with explicit owned paths. Read-only fan-out needs no worktree.
 
-**Reach for isolation only when nodes actually write in parallel.** It is the seatbelt for the
-one topology that needs it, not a default tax on every run. Read-only fan-out needs no worktree.
+Before parallel writes, answer:
 
-**Answer these three, out loud, BEFORE you fan out:**
-1. **Where does each agent work?** (Which worktree, which branch, which owned paths.)
-2. **How do results merge?** (Who applies, in what order, against what checkout.)
-3. **What happens when two disagree?** (Which node adjudicates, on what evidence.)
+1. Where does each writer work?
+2. How do results merge?
+3. Who adjudicates disagreement, and against what evidence?
 
-*A graph without that plan doesn't scale — it fails faster.*
+## STEP 5 — ANCHORS AND RECEIPTS-OR-RED
 
-**Failure containment.** In a chain, a failure cascades: C dies, D never runs, the whole thing
-halts. In a graph, failure is contained to its node — one bad agent drops out, eight good ones
-still return. Preserve that: never write a fan-in that assumes a full set.
+The graph needs anchors that cannot be argued with:
 
----
+- tests that actually ran, with their output;
+- independently checked evidence or a rendered surface;
+- immutable acceptance criteria and falsifiers;
+- a verifier that is not the author.
 
-## STEP 5 — ANCHORS
+Evidence is an artifact. Every gate emits a machine receipt containing the command, relevant
+output, exit status, event count or timestamp, and runner identity. A prose “PASS” is a claim,
+not a receipt. A capability (“the code supports it”) is not a measurement (“it ran; here is the
+output”). **Missing, unreadable, or unattributed evidence is RED.**
 
-**Topology alone does not buy truth.** A network of agents all confirming each other, none of
-them touching anything real, fails exactly like the single loop did — just with more moving
-parts and more green lights.
-
-**The graph needs anchors: nodes that cannot be argued with.**
-- **Tests that actually ran.** Not "should pass" — **did pass**, with the output.
-- **A verifier on evidence, not vibes.** A fetched page, a rendered surface someone opened, a
-  command whose output you can read, a source URL that resolves.
-- **Frozen rules an optimizer may not tune** — because those are exactly the ones an optimizer
-  would weaken. Acceptance criteria, standing rules, the definition of done. Checks are the
-  definition of done and are never weakened to get past them; raising a bar carries a note
-  citing intent.
-
-*The graph is only as honest as the things in it that refuse to move.*
-
-**Build your own anchors and name them.** Useful ones from practice: a *sighting receipt* (a
-delivery claim is unverified until an independent read of the rendered surface confirms it —
-and whoever looked must not be whoever claimed); a *claims register* (facts are graded by an
-evidence owner, never by the agent that wants to use them); a *conformance CLI* (your standing
-rules run as a test suite, so a violated rule fails a build instead of surviving in prose).
-
----
+Gates are standing invariants, not one-time admission tests. Declare each gate's re-run trigger
+alongside its pass condition: a new component, changed adapter, amended specification, crossed
+meter threshold, or claimed milestone. A negative falsifier can prove the old thing is gone; it
+cannot prove the replacement is bounded. Every ladder also carries an economic falsifier, such
+as calls, tokens, spawns, resumes, or work items per round, with a named threshold. Measure the
+largest object crossing the context boundary, not merely the convenient one.
 
 ## STEP 6 — WHEN NOT TO GRAPH
 
-**Most tasks are not graphs.** Reaching for one when you don't need it burns money and adds ways
-to fail. Say so plainly and move — refusing to graph, with the reason named, is conformance, not
-laziness.
+Skip graph orchestration for a small isolated change, for exploratory work whose target is not
+known, when the user requires approval after every step, or when every step genuinely reads the
+last. Say why. If the task is a loop, that is a branch into the loop discipline, not permission
+to omit controls.
 
-**Skip the graph when:**
-- **The task is small or isolated.** Adding a function, fixing one bug. A workflow is pure
-  overhead; a single agent is faster and cheaper.
-- **The user wants tight oversight.** If every step is to be read and approved before the next
-  runs, the graph's whole point — running wide without them — works against them.
-- **You don't know what you're looking for yet.** Exploratory work wants one agent you can
-  steer, not a fleet committed to a plan before the problem is understood.
-- **The steps genuinely depend on each other.** If every step reads the last step's output, it's
-  a real chain. Parallelism has nothing to grab, and forcing a graph on it adds coordination
-  cost for zero speedup.
+## STEP 6a — LOOP DISCIPLINE
 
-**The tell is Step 1.** If you cannot find two boxes with no arrow between them, there is no
-graph to build. It's a loop, and a loop is fine. **A graph is a tool for width.** When the work
-isn't wide, the line was never the problem.
+The graph defines macro-architecture; each recurring node is a loop inside a harness. Every
+loop declares the following before its first iteration.
 
----
+### 6a.1 — State hub
 
-## STEP 7 — LOOP-UNTIL-DRY (cycles that converge)
+Use one durable, versioned, out-of-context state artifact per loop. Every iteration reads it
+first and writes it last. It contains the mandate, acceptance criteria, current score per
+criterion, tried and rejected approaches with reasons, open questions, and next action.
 
-Sometimes the size of the job is unknown until you are in it: discovery of unknown size, a sweep
-where finding one thing reveals three more. That needs a **cycle** — a controlled edge back to
-an earlier node.
+Read the hub verbatim; do not regenerate it from memory. Bound and meter its size, including the
+largest object entering context. A summary that is re-derived each run is not durable state.
 
-**The danger is obvious:** a cycle that doesn't converge is an infinite loop that spawns agents
-until the budget is gone.
+### 6a.2 — Work ledger
 
-**The pattern that converges — loop-until-dry:**
-1. Fan out finders in parallel.
-2. Dedupe each new find.
-3. Verify the survivors on fresh context (§3).
-4. **Keep looping until K consecutive rounds surface nothing new** (K = 2 is the working
-   default), then stop.
+Track work items through an explicit lifecycle:
+`open → claimed → in_progress → done/failed`.
 
-**The one detail that makes or breaks it — the mistake almost everyone makes the first time:**
+Claiming is atomic: once claimed, no other runner can see the item as available. Never start a
+run on a terminal item or an item held by another run. An agent's own output must never be the
+trigger for a new run targeting that agent; the self-trigger count is a falsifier and must be
+zero.
 
-> **Dedupe against EVERYTHING SEEN, not just against confirmed results.**
+### 6a.3 — Scored ratchet
 
-Otherwise rejected findings reappear every round, the loop never runs dry, and you have built a
-machine that pays to rediscover the same dead ends forever.
+Write criteria and a named bar before work starts. Verification produces a number for every
+criterion and identifies the weakest. Each iteration targets the weakest score, even if a
+previously cleared criterion regresses. Keep improvements; revert regressions or errors and log
+the rejected hypothesis in the state hub. Never use one scalar where deterministic per-criterion
+checks exist. A judge score is provisional where no deterministic check exists. The bar always
+resolves to a pinned reference, not the previous iteration's output.
 
-**Convergence is an EVENT criterion, never a clock one** — K consecutive empty rounds, not "stop
-after an hour". Machines run on turns and rounds; wall-clock belongs only where you must detect
-*absence* (nothing fired at all), which produces no turns to count.
+### 6a.4 — Bounds
 
----
+Every loop has four event-counted bounds:
 
-## STEP 8 — MANDATES, NOT TASKS (when your agents have roles)
+1. an iteration cap per item;
+2. a token, spawn, and tool-call budget per item plus a shared fan-out ceiling;
+3. a circuit breaker on the same action and result, detected by action hash over a sliding event
+   window; and
+4. cancellation propagation from a completed, failed, or cancelled parent to every child.
 
-If your system has standing agent roles — a research seat, a review seat, a department head —
-the distinction below is operational, not decorative:
+Reaching any cap is an escalation event, never permission to continue. A wall-clock watchdog is
+allowed only for a foreign process that is externally hung; it escalates and never passes work.
 
-> **A role decides what to do. A worker is told.**
+### 6a.5 — Escalation
 
-**Work handed to a role-bearing agent is a MANDATE with judgment latitude — never a single
-mechanical step.**
+Declare the risk classes that stop the machine before dispatch: security, schema, public
+interfaces, authentication, payments, auto-merge paths, and changes to the permission table.
+Verifier rejection with reasons escalates; it does not silently retry forever. Escalate again
+when the same item has been retried or escalated twice. The classifier that calls a change safe
+is itself verified under STEP 3.
 
-**The anti-pattern, named so you catch yourself writing it:**
+### 6a.6 — Conditional triggers
 
-> If you find yourself writing **"advance X one step"** for a standing role — stop. That is the
-> defect. You have just built a one-node line and put a department head in it.
+Schedules, webhooks, labels, queues, and heartbeats may replace a human prompt only after the
+loop demonstrably has the atomic work ledger, scored bar, four bounds, and an economic
+falsifier. Without all four, an event-driven trigger is an amplifier, not an automation.
 
-**What that agent's turn must contain instead:**
-- The **outcome it owns**, stated as an outcome, not as the next action.
-- Its **own state** — open work, what came back — as an instrument panel, not as instructions.
-- **Latitude to fan out itself.** An agent that only consumes assigned items and never delegates
-  is being operated, not employed.
-- **The right to ask** — a first-class question back, with enough context to be answerable cold.
+## STEP 7 — LOOP-UNTIL-DRY
 
-**The class-fix test:** if your answer to an agent underperforming is a better instruction to
-that agent, you have issued an instance order. The fix is machinery — the loop, the gate, the
-state block — built so the agent produces the behaviour itself, forever.
+For unknown-size discovery:
 
-**Corollary — the orchestrator is not the workbench.** Machine work belongs to the machine. An
-orchestrator chain longer than about four dependent calls either justifies its dependency out
-loud or becomes a delegated lane.
+1. fan out finders;
+2. dedupe each new find against **everything seen**, including rejected findings;
+3. verify survivors on fresh context; and
+4. stop after K consecutive rounds produce nothing new (K = 2 is a useful default).
 
----
+Convergence is an event criterion, never a clock criterion. The four bounds in §6a.4 still
+apply; empty rounds do not replace hard ceilings.
 
-## STEP 9 — THE SELF-CHECK (answer these OUT LOUD, every turn)
+## STEP 8 — MANDATES, NOT TASKS
 
-Four questions. Say the answers in the reply or the plan doc — an unstated answer is a skipped
-check, and the honest answer "none, and here is why" is a pass.
+When a system has role-bearing agents, give each a mandate with an owned outcome and judgment
+latitude, not “advance X one step.” Include its current state, room to fan out, and a way to ask
+an answerable question. If a role underperforms, fix the machinery — loop, gate, state, or
+ledger — rather than issuing a better instance order.
 
-1. **What ran in parallel this turn?** (Name the batch. If nothing, name the real edge that
-   forced the line.)
-2. **What barrier did I pay for, and why?** (One of the three legitimate reasons in §2 — or it
-   was laziness; say which.)
-3. **Who verified with fresh eyes?** (Name the verifier, its shape, and confirm it is not the
-   author.)
-4. **What anchor proved it?** (The test that ran, the surface someone opened, the frozen rule
-   that held. "The agent said so" is not an anchor.)
+## STEP 9 — SEVEN-QUESTION SELF-CHECK
 
----
+Answer these out loud every turn. They are discipline, not verification; fresh-context checks
+and machine receipts remain the gates.
 
-## ANTI-PATTERNS — each of these is a defect, not a style
+1. What ran in parallel this turn? If nothing, what real edge forced the line?
+2. What barrier did I pay for, and which legitimate reason required it?
+3. Who verified with fresh eyes, in which shape, and were they not the author?
+4. What anchor proved it?
+5. What per-criterion score cleared the pinned bar, and where is the receipt?
+6. What event-counted bounds govern this loop, and what escalates at the cap?
+7. What was written to the state hub, and what will the next run read verbatim?
 
-| You wrote / did | The defect | The fix |
+## ANTI-PATTERNS — each is a defect
+
+| You wrote or did | The defect | The fix |
 |---|---|---|
-| "Do A, then B, then C" with no data crossing | A single chain: if C stalls, D never happens | Draw it (§1), cut the fake arrows, dispatch A/B/C together |
-| N orchestrator rounds for N independent tool calls | Serial chain — the named defect class | One turn, one batch |
-| The executor reviews its own output | The graph agrees with itself | Fresh-context verifier, never the author (§3) |
-| A verifier handed the executor's transcript | A single loop in a costume | Its own window, checking a real signal |
-| `parallel → transform → parallel` with no cross-item dependency | A barrier bought for nothing | Pipeline it; the transform is an edge |
-| Barrier because "it's cleaner" / "stages feel separate" | Laziness priced in wall-clock | Separate ≠ synchronized |
-| Several writing agents in one checkout | Agents overwrite each other | One worktree per writing node (§4) |
-| A fan-in that assumes every input arrived | One flaky node halts eight good ones | Tolerate nulls; filter the results |
-| A cycle deduping only against CONFIRMED results | Rejected findings return forever; never runs dry | Dedupe against everything seen (§7) |
-| "Stop after N minutes" as the convergence rule | Time-based criterion | K consecutive empty rounds (§7) |
-| "Advance X one step" handed to a standing role | A department head in a one-node line | Mandate with latitude (§8) |
-| A graph forced onto a genuinely sequential task | Coordination cost for zero speedup | Say it's a loop and run it (§6) |
-| Agents confirming each other, none touching anything real | Topology without anchors | Tests that ran, evidence not vibes (§5) |
-
----
-
-## SIX GRAPHS THAT ALREADY HAVE A SHAPE
-
-Change the task line, keep the skeleton: **find the real edges → fan out → verify on independent
-context → isolate the writers.**
-
-1. **Sweep across every file** — one agent per file hunting one class of defect, a verifier
-   confirming each hit before it reaches the report.
-2. **Cited report** — decompose into distinct angles, search in parallel, dedupe sources,
-   adversarially verify every claim before writing.
-3. **Port / migrate a module** — file by file, the test suite as a gate on each, failures looped
-   back, adversarial review catching what a single pass would ship broken.
-4. **Adversarial diff review** — routed by size: small change → one pass; large → full parallel
-   audit on distinct lenses, then a judge panel synthesizes.
-5. **Scheduled ecosystem scan** — many sources in parallel, ranked by impact at a barrier
-   (legitimate: cross-comparison), written up. Saved once, re-run by name.
-6. **Discovery of unknown size** — finders in parallel, each result deduped against everything
-   seen, survivors verified, looping until two rounds turn up nothing new.
-
----
+| “Do A, then B” with no data crossing | Fake serial edge | Draw, cut the edge, dispatch together |
+| N sequential calls for N independent items | Serial orchestrator chain | One batch |
+| Executor reviews its own output | Self-confirmation | Fresh-context verifier |
+| Several writers share one checkout | Overwrite collision | One worktree per writer |
+| Barrier because it is cleaner | Wasted synchronization | Pipeline it |
+| Missing receipt treated as green | Evidence laundering | Receipts-or-RED |
+| Gate runs only at admission | Regressions re-enter later | Declare and honor re-run triggers |
+| State regenerated from memory | Lossy continuity | One bounded, metered hub read first and written last |
+| Wake targets terminal or held work | Duplicate work | Atomic claim; terminal is terminal |
+| Agent output triggers its own wake | Self-trigger storm | Suppress it; falsifier must be zero |
+| One scalar says done | Goodhart bait | Per-criterion scored ratchet |
+| Cap says continue | No real bound | Escalate at the cap |
+| “Stop after N minutes” | Clock-based convergence | K empty event rounds plus hard bounds |
+| Event trigger added before controls | Amplifier without brakes | Ledger, ratchet, bounds, economic falsifier first |
+| Cycle dedupes only confirmed results | Rejected work returns forever | Dedupe everything seen |
+| A role receives “advance X one step” | Role reduced to a worker | Mandate with latitude |
 
 ## THE SHIFT
 
-> A prompter asks a question. **An architect draws a graph.**
+> A prompter asks a question. **An architect draws a graph and engineers the loop inside it.**
 
-The linear agent was never the ceiling — it was the first shape, the one everyone reaches for
-because it matches how we type: one line, one thing at a time.
-
-**Fan out where the work is independent. Gate the edges where confidence matters. Freeze the
-nodes that hold the truth.**
-
-Draw the graph. Stay the architect.
+Fan out where work is independent. Gate every edge where confidence matters. Freeze the nodes
+that hold the truth. Give every loop a state hub, ledger, ratchet, bounds, escalation policy,
+and conditional ingress. Draw the graph. Stay the architect.
