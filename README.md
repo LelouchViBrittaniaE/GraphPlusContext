@@ -1,7 +1,9 @@
 # GraphPlusContext
 
-**Two disciplines for running real work across many AI coding sessions: fan the work out like a
-graph, and keep the context somewhere the sessions can't take with them when they die.**
+**Three disciplines for running real work across many AI coding sessions: fan independent work
+out in parallel like a graph; run every long-lived task as an engineered loop — a durable state
+file, a claimable work ledger, a scored definition of done, hard bounds, and automatic re-wakes
+for stalled items; and keep the context somewhere the sessions can't take with it when they die.**
 
 Drop-in skills and a vault scaffold for Claude Code, Codex, and any agent tool that reads a
 global instructions file or a skills directory. Plain markdown, MIT licensed, no dependencies
@@ -12,13 +14,17 @@ observation economics, concrete mandates, trigger contracts, continuation, stage
 
 ---
 
-## The two problems this solves
+## The three problems this solves
 
 **1. Serial agent chains.** You type "do A, and then B, and then C" — and B never actually reads
 A's output. You just paid wall-clock for an ordering you invented while typing. At scale this is
 the dominant waste in agent work, and it hides because the result still arrives.
 
-**2. Context that dies with the session.** Everything the session learned — what's committed,
+**2. Loops that lie.** A recurring task with no state file re-derives its world every wake,
+re-tries dead ends, claims "done" with no score against a bar, and runs without bounds until the
+budget is gone. The loop discipline makes each of those impossible by construction.
+
+**3. Context that dies with the session.** Everything the session learned — what's committed,
 what's deployed, what's still broken — lives in a chat window. When the window degrades, or you
 switch models, or your subscription rolls over, that knowledge is gone. The usual fix is a
 hand-written handoff, which is where the *second* failure lives: a degraded session writing down
