@@ -7,6 +7,9 @@ Drop-in skills and a vault scaffold for Claude Code, Codex, and any agent tool t
 global instructions file or a skills directory. Plain markdown, MIT licensed, no dependencies
 beyond `bash` and (optionally) `jq`.
 
+What's new: the graph-method doctrine now includes nine receipt-backed hardenings for verification,
+observation economics, concrete mandates, trigger contracts, continuation, stage success, and release.
+
 ---
 
 ## The two problems this solves

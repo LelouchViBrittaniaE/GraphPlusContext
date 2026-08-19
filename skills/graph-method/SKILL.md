@@ -80,6 +80,19 @@ unreadable receipt, or check the verifier cannot run resolves to `REJECT` or
 `ESCALATE_HUMAN`, never to pass. Do not trust an implementer's report that tests passed; run
 them independently.
 
+**Verification is checked by default, not by work class.** An exempt-register entry is the
+only opt-out, and it names the owner, scope, reason, expiry or event boundary, and replacement
+evidence. There is no opt-in list that lets a work class skip the gate. An audited census found
+that several non-author sightings and a ratification surface had never run; the failure was an
+exemption shape that silently turned absence into policy.
+
+**Enumerate every completion route before calling a gate real.** Trace the normal route,
+retries, recovery, direct mutations, callbacks, and alternate finalizers; bind the same
+predicate and receipt requirement to each. A second finish path that bypasses the gate is a
+bypass. A rehearsal once passed its direct-update scenario while the required run-success
+finalizer never crossed the chokepoint; its green was a patch-shaped simulation, not live-route
+proof.
+
 The verifier also checks scope and intent, and looks for manufactured greens: disabled tests,
 weakened assertions, commented-out checks, argument-position mistakes, routes around the gate,
 and receipts that merely repeat the test input.
@@ -120,12 +133,36 @@ output, exit status, event count or timestamp, and runner identity. A prose “P
 not a receipt. A capability (“the code supports it”) is not a measurement (“it ran; here is the
 output”). **Missing, unreadable, or unattributed evidence is RED.**
 
+**The observer gets a larger event budget than the work it observes.** Set the observation
+bound strictly above the observed work's own execution budget, and record both budgets. If the
+observer cap kills first, the defect is in the observer; it is not evidence that the work
+finished or failed. A bounded observation once stopped while a young run was healthy and
+working, leaving completion and downstream verification unobserved; calling that state done
+would have laundered an observer failure into a work verdict.
+
 Gates are standing invariants, not one-time admission tests. Declare each gate's re-run trigger
 alongside its pass condition: a new component, changed adapter, amended specification, crossed
 meter threshold, or claimed milestone. A negative falsifier can prove the old thing is gone; it
 cannot prove the replacement is bounded. Every ladder also carries an economic falsifier, such
 as calls, tokens, spawns, resumes, or work items per round, with a named threshold. Measure the
 largest object crossing the context boundary, not merely the convenient one.
+
+**Attribute cost by PAYER identity, never by model name.** A model label is not an accounting
+principal: shared model ids across actors make model-keyed budgets false. Reports retain a
+stable payer identity and may group by model only as a secondary view. A mixed-key window once
+put estate work and an observer/build lane under the same model name; model aggregation hid the
+expensive lane and falsified the per-work-item denominator.
+
+**A mandate without a concrete how-block is not machinery.** The block gives the exact call
+pattern, authentication shape, and resolved target identities needed to act. Capability plus
+instruction still is not behavior. A head had the right tools and a broad mandate but produced
+no child work; a later rehearsal copied the exact API pattern and resolved ids into managed
+surfaces, making the behavior testable. The failure was an unexecutable instruction.
+
+**A surface claim is not a release.** A claim records what an author says; a `RELEASE` act
+publishes through the named channel, and an independent rendered-surface check confirms the
+released bytes or fingerprint. A dashboard build once had a truthful claim and local files but
+no independent rendered release receipt; the claim could not close delivery.
 
 ## STEP 6 — WHEN NOT TO GRAPH
 
@@ -158,6 +195,13 @@ run on a terminal item or an item held by another run. An agent's own output mus
 trigger for a new run targeting that agent; the self-trigger count is a falsifier and must be
 zero.
 
+**Continuation reconciliation is a bounded loop edge.** When a worker ends cleanly short of a
+terminal result, the reconciler may re-wake that quiet item exactly once per quiet period, with
+a named event predicate and a daily cap. It excludes active, terminal, held, disposition-
+pending, and already-forwarded items, and receipts the run identity, reason, cap, and transition.
+An item once stayed stranded after a clean worker end; a bounded reconciler proved the re-wake,
+while a blocked control stayed untouched. Unbounded "try again" would recreate the amplifier.
+
 ### 6a.3 — Scored ratchet
 
 Write criteria and a named bar before work starts. Verification produces a number for every
@@ -180,6 +224,12 @@ Every loop has four event-counted bounds:
 Reaching any cap is an escalation event, never permission to continue. A wall-clock watchdog is
 allowed only for a foreign process that is externally hung; it escalates and never passes work.
 
+**Observation is a child budget with a strict inequality.** The watcher, poller, census, and
+verifier together must be budgeted above the work budget they judge; the child cannot declare
+the parent RED merely because its own ceiling arrived. A checker that expires first emits
+`OBSERVER_CAP_REACHED`, escalates, and leaves the work verdict open. A young execution once
+outlived a cheaper poll ceiling; the missing evidence was a watcher defect, not completion.
+
 ### 6a.5 — Escalation
 
 Declare the risk classes that stop the machine before dispatch: security, schema, public
@@ -193,6 +243,20 @@ is itself verified under STEP 3.
 Schedules, webhooks, labels, queues, and heartbeats may replace a human prompt only after the
 loop demonstrably has the atomic work ledger, scored bar, four bounds, and an economic
 falsifier. Without all four, an event-driven trigger is an amplifier, not an automation.
+
+**Wake and trigger shapes are a contract.** Enumerate every eligible transition and fixture it:
+assignment, status transition, recovery, continuation, schedule, webhook, and explicit human
+routes in scope; record the wake reason and reject unlisted shapes. Ordering is part of the
+contract, including comment-before-status and self-authored-comment cases. A seeded backlog
+item once looked assigned but could not wake on assignment, while another ordering let a board
+comment wake the head before the sanctioned status transition; fixtures exposed distinct
+predicates hidden by a generic "wake."
+
+**Stage predicates trigger on `SUCCEEDED`, never merely `ENDED`, upstream.** `ENDED` includes
+failure, cancellation, timeout, and process loss; downstream work proceeds only after a
+machine-proven success and required receipt. A stage rehearsal reached finalization through a
+direct update but had not proved a succeeded run; treating "ended" as enough would have opened
+the next stage on an unproven path.
 
 ## STEP 7 — LOOP-UNTIL-DRY
 
@@ -212,6 +276,11 @@ When a system has role-bearing agents, give each a mandate with an owned outcome
 latitude, not “advance X one step.” Include its current state, room to fan out, and a way to ask
 an answerable question. If a role underperforms, fix the machinery — loop, gate, state, or
 ledger — rather than issuing a better instance order.
+
+The mandate's how-block is part of the machinery: exact call pattern, auth placement, resolved
+target identities, expected response shape, and the receipt to emit. A role may choose among
+valid paths, but may not infer the path from capability alone; the failed plan-only head run is
+the forcing vignette for this boundary.
 
 ## STEP 9 — SEVEN-QUESTION SELF-CHECK
 
